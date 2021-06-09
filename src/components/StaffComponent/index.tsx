@@ -1,14 +1,14 @@
 import React from "react"
 import styles from "./styles.module.css"
 
-interface People{
-  name : string;
-  image : string;
-  role : string;
-  socialMedia : string;
+interface People {
+  name: string
+  image: string
+  role: string
+  socialMedia: string[]
 }
 
-interface StaffComponentProps{
+interface StaffComponentProps {
   peoples: People[]
 }
 
@@ -21,10 +21,12 @@ export default function StaffComponent({ peoples }: StaffComponentProps) {
             <img className={styles.imgStaff} src={people.image} alt="" />
             <div className={styles.divContent}>
               <h3>{people.name}</h3>
-              <p>{people.role}</p>
-              <a className={styles.a} href={people.socialMedia}>
-                {people.socialMedia}
-              </a>
+              <p className={styles.p}>{people.role}</p>
+              {people.socialMedia.map((link, index) => (
+                <a className={styles.a} key={index} href={link}>
+                  {link.slice(8, link.length)}
+                </a>
+              ))}
             </div>
           </li>
         )

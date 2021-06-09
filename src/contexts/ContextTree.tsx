@@ -19,13 +19,8 @@ interface createContextData{
   tree: NodeTree;
   history: msgData[];
   createNewTree: (number: number) => void;
-  preOrder: (root: NodeTree) => void;
-  inOrder: (root: NodeTree) => void;
-  postOrder: (root: NodeTree) => void;
-  handleButtonClick: (msgTitle: string, callback: (tree: NodeTree) => void) => void;
-  handleButtonBFS: () => void;
+  handleButtonClick: (msgTitle: string, option: 'preOrder' | 'inOrder' | 'postOrder' | 'BFS') => void;
 }
-
 
 export const ContextTree = createContext({} as createContextData)
 
@@ -33,7 +28,6 @@ export const ContextTreeProvider: React.FC = ({children}) => {
   const [treeRawNodeDatum, setTreeRawNodeDatum] = useState(null as RawNodeDatum)
   const [tree, setTree] = useState(null as NodeTree)
   const [history, setHistory] = useState([])
-  let array: number[] = []
 
   useEffect(() => {
     if (tree){
@@ -53,7 +47,7 @@ export const ContextTreeProvider: React.FC = ({children}) => {
   }
 
   function createNewTree(number: number){
-    if (!number){
+    if (!number || number <= 0){
       alert('Enter the number of nodes')
       return
     }
@@ -70,56 +64,14 @@ export const ContextTreeProvider: React.FC = ({children}) => {
     setTreeRawNodeDatum(treeRawNodeDatum);
   }
 
-  function preOrder(root: NodeTree){
-    if (!root){
-      return
-    }
-
-    array.push(root.value);
-    preOrder(root.left)
-    preOrder(root.right)
-  }
-
-  function inOrder(root: NodeTree){
-    if (!root){
-      return
-    }
-
-    inOrder(root.left)
-    array.push(root.value);
-    inOrder(root.right)
-  }
-
-  function postOrder(root: NodeTree){
-    if (!root){
-      return
-    }
-
-    postOrder(root.left);
-    postOrder(root.right);
-    array.push(root.value);
-  }
-
-  function handleButtonClick(msgTitle: string, callback: (tree: NodeTree) => void){
+  function handleButtonClick(msgTitle: string, option: 'preOrder' | 'inOrder' | 'postOrder' | 'BFS'){
     if(!tree){
       return
     }
-    array = [];
-    callback(tree)
 
-    const stringfyArray = array.join(', ')
+    const body = tree[option]().join(', ')
 
-    sendMsg(msgTitle, stringfyArray)
-  }
-
-  function handleButtonBFS(){
-    if(!tree){
-      return
-    }
-    const BFSlist = tree.BFS()
-    const stringfy  = BFSlist.map(node => node.value).join(', ')
-
-    sendMsg("breadth-first search", stringfy)
+    sendMsg(msgTitle, body)
   }
 
   return (
@@ -128,11 +80,7 @@ export const ContextTreeProvider: React.FC = ({children}) => {
       tree,
       history,
       createNewTree,
-      preOrder,
-      inOrder,
-      postOrder,
       handleButtonClick,
-      handleButtonBFS,
     }}>
       {children}
     </ContextTree.Provider>
